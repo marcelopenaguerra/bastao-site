@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Bastão - Informática{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Controle de Bastão</h1>
+        <div class="flex items-center gap-4">
+            <nav class="text-sm text-slate-500 space-x-4">
+                <a href="/" class="text-slate-800 font-medium">Fila</a>
+                <a href="/demandas" class="hover:text-slate-800">Demandas</a>
+                <a href="/relatorios" class="hover:text-slate-800">Relatórios</a>
+                <a href="/jogo/simon" class="hover:text-slate-800">Jogo</a>
+                {% if user.is_admin %}<a href="/admin" class="hover:text-slate-800">Admin</a>{% endif %}
+            </nav>
+            <form method="post" action="/logout">
+                <button class="text-sm text-slate-500 hover:text-slate-800" type="submit">Sair ({{ user.nome }})</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold">Fila</h2>
+            <div class="space-x-2">
+                <form method="post" action="/fila/entrar" class="inline">
+                    <button class="text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700" type="submit">
+                        Entrar na fila
+                    </button>
+                </form>
+                <form method="post" action="/fila/sair" class="inline">
+                    <button class="text-sm border border-slate-300 rounded px-3 py-1.5 hover:bg-slate-50" type="submit">
+                        Sair da fila
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% include "partials/fila_fragment.html" %}
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold mb-4">Meu status</h2>
+        <form method="post" action="/status/atualizar" class="flex flex-wrap items-center gap-2">
+            <select name="status_tipo" class="border border-slate-300 rounded px-2 py-1.5 text-sm">
+                {% for tipo in StatusTipo %}
+                <option value="{{ tipo.value }}">{{ tipo.value }}</option>
+                {% endfor %}
+            </select>
+            <input name="detalhe" placeholder="detalhe (opcional)"
+                   class="border border-slate-300 rounded px-2 py-1.5 text-sm flex-1 min-w-[10rem]">
+            <button class="text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700" type="submit">
+                Atualizar
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

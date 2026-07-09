@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Admin - SQL{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Admin</h1>
+        <nav class="text-sm text-slate-500 space-x-4">
+            <a href="/" class="hover:text-slate-800">Fila</a>
+            <a href="/admin/usuarios" class="hover:text-slate-800">Usuários</a>
+            <a href="/admin/estatisticas" class="hover:text-slate-800">Estatísticas</a>
+            <a href="/admin/backup" class="hover:text-slate-800">Backup</a>
+            <a href="/admin/sql" class="text-slate-800 font-medium">SQL</a>
+        </nav>
+    </header>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold mb-2">Console SQL (somente SELECT)</h2>
+        <p class="text-xs text-slate-500 mb-4">Apenas consultas de leitura são permitidas; qualquer alteração é bloqueada.</p>
+        <form method="post" action="/admin/sql" class="mb-4">
+            <textarea name="consulta" rows="3" placeholder="select * from usuarios"
+                      class="w-full border border-slate-300 rounded px-2 py-1.5 text-sm font-mono">{{ consulta }}</textarea>
+            <button class="mt-2 text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700" type="submit">
+                Executar
+            </button>
+        </form>
+
+        {% if erro %}
+        <div class="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{{ erro }}</div>
+        {% endif %}
+
+        {% if colunas is not none %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left text-slate-500 border-b">
+                        {% for c in colunas %}<th class="py-2 pr-2">{{ c }}</th>{% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in linhas %}
+                    <tr class="border-b last:border-0">
+                        {% for valor in linha %}<td class="py-2 pr-2">{{ valor }}</td>{% endfor %}
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="{{ colunas|length }}" class="py-4 text-center text-slate-400">Sem resultados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

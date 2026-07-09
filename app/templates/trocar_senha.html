@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Trocar senha - Bastão{% endblock %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-sm bg-white rounded-lg shadow p-8">
+        <h1 class="text-xl font-semibold mb-1">Troca de senha obrigatória</h1>
+        <p class="text-slate-500 text-sm mb-6">Defina uma nova senha para continuar.</p>
+
+        {% if erro %}
+        <div class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+            {{ erro }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="/trocar-senha" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1" for="nova_senha">Nova senha</label>
+                <input class="w-full border border-slate-300 rounded px-3 py-2" type="password"
+                       id="nova_senha" name="nova_senha" minlength="8" required autofocus>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1" for="confirmar_senha">Confirmar nova senha</label>
+                <input class="w-full border border-slate-300 rounded px-3 py-2" type="password"
+                       id="confirmar_senha" name="confirmar_senha" minlength="8" required>
+            </div>
+            <button class="w-full bg-slate-800 text-white rounded py-2 font-medium hover:bg-slate-700" type="submit">
+                Salvar nova senha
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

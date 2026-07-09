@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Admin - Usuários{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Admin</h1>
+        <nav class="text-sm text-slate-500 space-x-4">
+            <a href="/" class="hover:text-slate-800">Fila</a>
+            <a href="/admin/usuarios" class="text-slate-800 font-medium">Usuários</a>
+            <a href="/admin/estatisticas" class="hover:text-slate-800">Estatísticas</a>
+            <a href="/admin/backup" class="hover:text-slate-800">Backup</a>
+            <a href="/admin/sql" class="hover:text-slate-800">SQL</a>
+        </nav>
+    </header>
+
+    {% if senha_gerada %}
+    <div class="mb-6 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+        Senha temporária gerada: <code class="font-mono">{{ senha_gerada }}</code>
+        — comunique ao colaborador por um canal seguro. Ele deverá trocá-la no primeiro login.
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="font-semibold mb-4">Novo usuário</h2>
+        <form method="post" action="/admin/usuarios" class="flex flex-wrap items-center gap-2">
+            <input name="username" placeholder="username" required
+                   class="border border-slate-300 rounded px-2 py-1.5 text-sm">
+            <input name="nome" placeholder="nome completo" required
+                   class="border border-slate-300 rounded px-2 py-1.5 text-sm flex-1 min-w-[10rem]">
+            <label class="text-sm text-slate-500 flex items-center gap-1">
+                <input type="checkbox" name="is_admin_novo" value="true"> admin
+            </label>
+            <button class="text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700" type="submit">
+                Criar
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold mb-4">Usuários</h2>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-slate-500 border-b">
+                    <th class="py-2 pr-2">Nome</th>
+                    <th class="py-2 pr-2">Username</th>
+                    <th class="py-2 pr-2">Admin</th>
+                    <th class="py-2 pr-2">Ativo</th>
+                    <th class="py-2 pr-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr class="border-b last:border-0">
+                    <td class="py-2 pr-2">{{ u.nome }}</td>
+                    <td class="py-2 pr-2">{{ u.username }}</td>
+                    <td class="py-2 pr-2">{{ "sim" if u.is_admin else "não" }}</td>
+                    <td class="py-2 pr-2">{{ "sim" if u.ativo else "não" }}</td>
+                    <td class="py-2 pr-2 text-right space-x-2">
+                        <form method="post" action="/admin/usuarios/{{ u.id }}/resetar-senha" class="inline">
+                            <button class="text-xs text-blue-600 hover:underline" type="submit">resetar senha</button>
+                        </form>
+                        {% if u.ativo %}
+                        <form method="post" action="/admin/usuarios/{{ u.id }}/desativar" class="inline">
+                            <button class="text-xs text-red-600 hover:underline" type="submit">desativar</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="/admin/usuarios/{{ u.id }}/ativar" class="inline">
+                            <button class="text-xs text-green-700 hover:underline" type="submit">ativar</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

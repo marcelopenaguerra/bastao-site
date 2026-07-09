@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Admin - Estatísticas{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Admin</h1>
+        <nav class="text-sm text-slate-500 space-x-4">
+            <a href="/" class="hover:text-slate-800">Fila</a>
+            <a href="/admin/usuarios" class="hover:text-slate-800">Usuários</a>
+            <a href="/admin/estatisticas" class="text-slate-800 font-medium">Estatísticas</a>
+            <a href="/admin/backup" class="hover:text-slate-800">Backup</a>
+            <a href="/admin/sql" class="hover:text-slate-800">SQL</a>
+        </nav>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-slate-500 text-xs">Usuários totais</p>
+            <p class="text-2xl font-semibold">{{ stats.total_usuarios }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-slate-500 text-xs">Usuários ativos</p>
+            <p class="text-2xl font-semibold">{{ stats.usuarios_ativos }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-slate-500 text-xs">Na fila agora</p>
+            <p class="text-2xl font-semibold">{{ stats.na_fila_agora }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-slate-500 text-xs">Demandas ativas</p>
+            <p class="text-2xl font-semibold">{{ stats.demandas_ativas }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-slate-500 text-xs">Rodadas totais</p>
+            <p class="text-2xl font-semibold">{{ stats.total_rodadas }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

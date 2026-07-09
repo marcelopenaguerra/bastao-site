@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Relatórios - Bastão{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Relatórios</h1>
+        <nav class="text-sm text-slate-500 space-x-4">
+            <a href="/" class="hover:text-slate-800">Fila</a>
+            <a href="/demandas" class="hover:text-slate-800">Demandas</a>
+            <a href="/relatorios" class="text-slate-800 font-medium">Relatórios</a>
+            <a href="/jogo/simon" class="hover:text-slate-800">Jogo</a>
+        </nav>
+    </header>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold">Ranking de bastão (rodadas)</h2>
+            <a href="/relatorios/export.csv" class="text-sm text-blue-600 hover:underline">exportar CSV</a>
+        </div>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-slate-500 border-b">
+                    <th class="py-2 pr-2">Nome</th>
+                    <th class="py-2 pr-2">Rodadas</th>
+                    <th class="py-2 pr-2">Tempo total com o bastão</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ranking %}
+                <tr class="border-b last:border-0">
+                    <td class="py-2 pr-2">{{ item.usuario.nome }}</td>
+                    <td class="py-2 pr-2">{{ item.rodadas }}</td>
+                    <td class="py-2 pr-2">{{ formatar_tempo(item.tempo_total_segundos) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="py-4 text-center text-slate-400">Sem dados ainda.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold mb-4">Atividades por colaborador</h2>
+        <form method="get" action="/relatorios" class="flex flex-wrap items-center gap-2 mb-4">
+            <label class="text-sm text-slate-500">De
+                <input type="date" name="inicio" value="{{ inicio }}" class="border border-slate-300 rounded px-2 py-1 text-sm">
+            </label>
+            <label class="text-sm text-slate-500">Até
+                <input type="date" name="fim" value="{{ fim }}" class="border border-slate-300 rounded px-2 py-1 text-sm">
+            </label>
+            <button class="text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700" type="submit">
+                Filtrar
+            </button>
+        </form>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-slate-500 border-b">
+                    <th class="py-2 pr-2">Nome</th>
+                    <th class="py-2 pr-2">Qtd. atividades</th>
+                    <th class="py-2 pr-2">Minutos totais</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in atividades %}
+                <tr class="border-b last:border-0">
+                    <td class="py-2 pr-2">{{ item.usuario.nome }}</td>
+                    <td class="py-2 pr-2">{{ item.quantidade }}</td>
+                    <td class="py-2 pr-2">{{ "%.1f"|format(item.duracao_total_minutos) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="py-4 text-center text-slate-400">Sem atividades no período.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

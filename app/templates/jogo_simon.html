@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Jogo Simon - Bastão{% endblock %}
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <header class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Jogo Simon</h1>
+        <nav class="text-sm text-slate-500 space-x-4">
+            <a href="/" class="hover:text-slate-800">Fila</a>
+            <a href="/demandas" class="hover:text-slate-800">Demandas</a>
+            <a href="/relatorios" class="hover:text-slate-800">Relatórios</a>
+            <a href="/jogo/simon" class="text-slate-800 font-medium">Jogo</a>
+        </nav>
+    </header>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6 text-center">
+        <div class="grid grid-cols-2 gap-3 w-64 mx-auto mb-4">
+            <button data-color="green" class="simon-btn h-28 rounded bg-green-500 opacity-70"></button>
+            <button data-color="red" class="simon-btn h-28 rounded bg-red-500 opacity-70"></button>
+            <button data-color="yellow" class="simon-btn h-28 rounded bg-yellow-400 opacity-70"></button>
+            <button data-color="blue" class="simon-btn h-28 rounded bg-blue-500 opacity-70"></button>
+        </div>
+        <p id="simon-status" class="text-sm text-slate-600 mb-3">Clique em "Iniciar" para jogar.</p>
+        <button id="simon-start" class="text-sm bg-slate-800 text-white rounded px-3 py-1.5 hover:bg-slate-700">
+            Iniciar
+        </button>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold mb-4">Ranking (top 5)</h2>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-slate-500 border-b">
+                    <th class="py-2 pr-2">Nome</th>
+                    <th class="py-2 pr-2">Melhor pontuação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ranking %}
+                <tr class="border-b last:border-0">
+                    <td class="py-2 pr-2">{{ item.usuario.nome }}</td>
+                    <td class="py-2 pr-2">{{ item.melhor_score }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="2" class="py-4 text-center text-slate-400">Ninguém jogou ainda.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+(function () {
+    const colors = ["green", "red", "yellow", "blue"];
+    const statusEl = document.getElementById("simon-status");
+    const startBtn = document.getElementById("simon-start");
+    let sequence = [];
+    let playerStep = 0;
+    let accepting = false;
+
+    function flash(color, duration) {
+        return new Promise((resolve) => {
+            const btn = document.querySelector('.simon-btn[data-color="' + color + '"]');
+            btn.classList.remove("opacity-70");
+            setTimeout(() => {
+                btn.classList.add("opacity-70");
+                setTimeout(resolve, 150);
+            }, duration);
+        });
+    }
+
+    async function playSequence() {
+        accepting = false;
+        statusEl.textContent = "Observe a sequência...";
+        for (const color of sequence) {
+            await flash(color, 400);
+        }
+        playerStep = 0;
+        accepting = true;
+        statusEl.textContent = "Sua vez!";
+    }
+
+    function proximaRodada() {
+        sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+        playSequence();
+    }
+
+    async function fimDeJogo() {
+        accepting = false;
+        const score = Math.max(sequence.length - 1, 0);
+        statusEl.textContent = "Fim de jogo! Pontuação: " + score;
+        if (score > 0) {
+            await fetch("/jogo/simon/score", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "score=" + encodeURIComponent(score),
+            });
+            window.location.reload();
+            return;
+        }
+        startBtn.textContent = "Jogar novamente";
+        startBtn.disabled = false;
+    }
+
+    document.querySelectorAll(".simon-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            if (!accepting) return;
+            const cor = btn.dataset.color;
+            if (cor === sequence[playerStep]) {
+                playerStep += 1;
+                if (playerStep === sequence.length) {
+                    accepting = false;
+                    setTimeout(proximaRodada, 600);
+                }
+            } else {
+                fimDeJogo();
+            }
+        });
+    });
+
+    startBtn.addEventListener("click", () => {
+        sequence = [];
+        startBtn.disabled = true;
+        proximaRodada();
+    });
+})();
+</script>
+{% endblock %}

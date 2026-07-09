@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login - Bastão{% endblock %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-sm bg-white rounded-lg shadow p-8">
+        <h1 class="text-xl font-semibold mb-1">Controle de Bastão</h1>
+        <p class="text-slate-500 text-sm mb-6">Informática</p>
+
+        {% if erro %}
+        <div class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+            {{ erro }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="/login" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1" for="identificador">Usuário ou nome</label>
+                <input class="w-full border border-slate-300 rounded px-3 py-2" type="text"
+                       id="identificador" name="identificador" required autofocus>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1" for="senha">Senha</label>
+                <input class="w-full border border-slate-300 rounded px-3 py-2" type="password"
+                       id="senha" name="senha" required>
+            </div>
+            <button class="w-full bg-slate-800 text-white rounded py-2 font-medium hover:bg-slate-700" type="submit">
+                Entrar
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
