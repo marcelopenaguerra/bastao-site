@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Bastão - Informática", lifespan=lifespan)
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static", check_dir=False), name="static")
 app.include_router(auth_router)
 app.include_router(fila_router)
 app.include_router(demandas_router)
