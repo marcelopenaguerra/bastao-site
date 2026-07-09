@@ -3,16 +3,14 @@ import sys
 from logging.config import fileConfig
 from pathlib import Path
 
-from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.config import settings  # noqa: E402
-from app.db import Base  # noqa: E402
+from app.db import Base, engine  # noqa: E402
 from app import models  # noqa: E402,F401
 
 # this is the Alembic Config object, which provides
@@ -67,21 +65,13 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    """In this scenario we need to create an Engine
-    and associate a connection with the context.
+    """Reaproveita o mesmo engine de app.db (já com statement_cache_size=0
+    para funcionar com o pooler do Supabase em modo transaction)."""
 
-    """
-
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-
-    async with connectable.connect() as connection:
+    async with engine.connect() as connection:
         await connection.run_sync(do_run_migrations)
 
-    await connectable.dispose()
+    await engine.dispose()
 
 
 def run_migrations_online() -> None:
